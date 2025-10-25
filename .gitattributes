@@ -1,0 +1,4 @@
+# typst-jp/docs repository specific merge strategies
+.github/workflows/* merge=ours
+README.md merge=ours
+CONTRIBUTING.md merge=ours

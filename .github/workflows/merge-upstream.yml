@@ -1,0 +1,49 @@
+name: Merge upstream changes
+
+on:
+  workflow_dispatch:
+    inputs:
+      upstream_ref:
+        description: "Upstream tag to merge"
+        required: true
+        type: string
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  merge-upstream:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@08eba0b27e820071cde6df949e0beb9ba4906955 # v4.3.0
+
+      - name: Configure Git
+        run: |
+          git config --global user.name 'GitHub Actions'
+          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+          # Set up 'ours' merge driver
+          git config --global merge.ours.driver true
+
+      - name: Create new branch
+        run: |
+          git checkout -b feature/merge-upstream-${{ github.event.inputs.upstream_ref }}
+
+      - name: Add upstream remote
+        run: |
+          git remote add upstream https://github.com/typst/typst.git
+          git fetch upstream
+
+      - name: Attempt merge with commit markers
+        run: |
+          # Try to merge but allow conflicts
+          TARGET_COMMIT=$(git rev-parse ${{ github.event.inputs.upstream_ref }})
+          git merge --no-commit --no-ff --allow-unrelated-histories $TARGET_COMMIT || true
+
+          # Commit the merge with conflict markers
+          git commit -a -m "Merge upstream changes from ${{ github.event.inputs.upstream_ref }}"
+
+      - name: Push branch
+        run: |
+          git push --force origin feature/merge-upstream-${{ github.event.inputs.upstream_ref }}
