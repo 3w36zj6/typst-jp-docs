@@ -2,11 +2,19 @@ use comemo::Tracked;
 
 use crate::diag::HintedStrResult;
 use crate::engine::Engine;
+<<<<<<< HEAD
 use crate::foundations::{func, Array, Context, LocatableSelector, Value};
 
 /// Finds elements in the document.
 ///
 /// The `query` functions lets you search your document for elements of a
+=======
+use crate::foundations::{Array, Context, LocatableSelector, Value, func};
+
+/// Finds elements in the document.
+///
+/// The `query` function lets you search your document for elements of a
+>>>>>>> dd1e6e94f73db6a257a5ac34a6320e00410a2534
 /// particular type or with a particular label. To use it, you first need to
 /// ensure that [context] is available.
 ///
@@ -117,6 +125,11 @@ use crate::foundations::{func, Array, Context, LocatableSelector, Value};
 /// ]
 /// ```
 ///
+<<<<<<< HEAD
+=======
+/// ## Retrieving a specific field
+///
+>>>>>>> dd1e6e94f73db6a257a5ac34a6320e00410a2534
 /// Frequently, you're interested in only one specific field of the resulting
 /// elements. In the case of the `metadata` element, the `value` field is the
 /// interesting one. You can extract just this field with the `--field`
@@ -134,6 +147,15 @@ use crate::foundations::{func, Array, Context, LocatableSelector, Value};
 /// $ typst query example.typ "<note>" --field value --one
 /// "This is a note"
 /// ```
+<<<<<<< HEAD
+=======
+///
+/// ## Querying for a specific export target
+///
+/// In case you need to query a document when exporting for a specific target,
+/// you can use the `--target` argument. Valid values are `paged`, and `html`
+/// (if the [`html`] feature is enabled).
+>>>>>>> dd1e6e94f73db6a257a5ac34a6320e00410a2534
 #[func(contextual)]
 pub fn query(
     engine: &mut Engine,
