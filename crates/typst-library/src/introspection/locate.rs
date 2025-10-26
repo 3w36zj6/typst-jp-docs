@@ -2,7 +2,11 @@ use comemo::Tracked;
 
 use crate::diag::HintedStrResult;
 use crate::engine::Engine;
+<<<<<<< HEAD
 use crate::foundations::{func, Context, LocatableSelector};
+=======
+use crate::foundations::{Context, LocatableSelector, func};
+>>>>>>> dd1e6e94f73db6a257a5ac34a6320e00410a2534
 use crate::introspection::Location;
 
 /// Determines the location of an element in the document.
