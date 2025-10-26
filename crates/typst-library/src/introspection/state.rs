@@ -1,4 +1,5 @@
 use comemo::{Track, Tracked, TrackedMut};
+<<<<<<< HEAD
 use ecow::{eco_format, eco_vec, EcoString, EcoVec};
 use typst_syntax::Span;
 
@@ -12,6 +13,20 @@ use crate::foundations::{
 use crate::introspection::{Introspector, Locatable, Location};
 use crate::routines::Routines;
 use crate::World;
+=======
+use ecow::{EcoString, EcoVec, eco_format, eco_vec};
+use typst_syntax::Span;
+
+use crate::World;
+use crate::diag::{At, SourceResult, bail};
+use crate::engine::{Engine, Route, Sink, Traced};
+use crate::foundations::{
+    Args, Construct, Content, Context, Func, LocatableSelector, NativeElement, Repr,
+    Selector, Str, Value, cast, elem, func, scope, select_where, ty,
+};
+use crate::introspection::{Introspector, Locatable, Location};
+use crate::routines::Routines;
+>>>>>>> dd1e6e94f73db6a257a5ac34a6320e00410a2534
 
 /// Manages stateful parts of your document.
 ///
@@ -24,6 +39,7 @@ use crate::World;
 ///
 /// ```typ
 /// // This doesn't work!
+<<<<<<< HEAD
 /// #let x = 0
 /// #let compute(expr) = {
 ///   x = eval(
@@ -36,6 +52,20 @@ use crate::World;
 /// #compute("x + 3") \
 /// #compute("x * 2") \
 /// #compute("x - 5")
+=======
+/// #let star = 0
+/// #let compute(expr) = {
+///   star = eval(
+///     expr.replace("⭐", str(star))
+///   )
+///   [New value is #star.]
+/// }
+///
+/// #compute("10") \
+/// #compute("⭐ + 3") \
+/// #compute("⭐ * 2") \
+/// #compute("⭐ - 5")
+>>>>>>> dd1e6e94f73db6a257a5ac34a6320e00410a2534
 /// ```
 ///
 /// # State and document markup { #state-and-markup }
@@ -88,6 +118,7 @@ use crate::World;
 /// Our initial example would now look like this:
 ///
 /// ```example
+<<<<<<< HEAD
 /// #let s = state("x", 0)
 /// #let compute(expr) = [
 ///   #s.update(x =>
@@ -100,6 +131,20 @@ use crate::World;
 /// #compute("x + 3") \
 /// #compute("x * 2") \
 /// #compute("x - 5")
+=======
+/// #let star = state("star", 0)
+/// #let compute(expr) = {
+///   star.update(old =>
+///     eval(expr.replace("⭐", str(old)))
+///   )
+///   [New value is #context star.get().]
+/// }
+///
+/// #compute("10") \
+/// #compute("⭐ + 3") \
+/// #compute("⭐ * 2") \
+/// #compute("⭐ - 5")
+>>>>>>> dd1e6e94f73db6a257a5ac34a6320e00410a2534
 /// ```
 ///
 /// State managed by Typst is always updated in layout order, not in evaluation
@@ -110,6 +155,7 @@ use crate::World;
 /// but they still show the correct results:
 ///
 /// ```example
+<<<<<<< HEAD
 /// >>> #let s = state("x", 0)
 /// >>> #let compute(expr) = [
 /// >>>   #s.update(x =>
@@ -126,6 +172,24 @@ use crate::World;
 ///
 /// #compute("10") \
 /// #compute("x + 3") \
+=======
+/// >>> #let star = state("star", 0)
+/// >>> #let compute(expr) = {
+/// >>>   star.update(old =>
+/// >>>     eval(expr.replace("⭐", str(old)))
+/// >>>   )
+/// >>>   [New value is #context star.get().]
+/// >>> }
+/// <<< ...
+///
+/// #let more = [
+///   #compute("⭐ * 2") \
+///   #compute("⭐ - 5")
+/// ]
+///
+/// #compute("10") \
+/// #compute("⭐ + 3") \
+>>>>>>> dd1e6e94f73db6a257a5ac34a6320e00410a2534
 /// #more
 /// ```
 ///
@@ -141,6 +205,7 @@ use crate::World;
 /// methods gives us the value of the state at the end of the document.
 ///
 /// ```example
+<<<<<<< HEAD
 /// >>> #let s = state("x", 0)
 /// >>> #let compute(expr) = [
 /// >>>   #s.update(x => {
@@ -158,6 +223,25 @@ use crate::World;
 /// *Here.* <here> \
 /// #compute("x * 2") \
 /// #compute("x - 5")
+=======
+/// >>> #let star = state("star", 0)
+/// >>> #let compute(expr) = {
+/// >>>   star.update(old =>
+/// >>>     eval(expr.replace("⭐", str(old)))
+/// >>>   )
+/// >>>   [New value is #context star.get().]
+/// >>> }
+/// <<< ...
+///
+/// Value at `<here>` is
+/// #context star.at(<here>)
+///
+/// #compute("10") \
+/// #compute("⭐ + 3") \
+/// *Here.* <here> \
+/// #compute("⭐ * 2") \
+/// #compute("⭐ - 5")
+>>>>>>> dd1e6e94f73db6a257a5ac34a6320e00410a2534
 /// ```
 ///
 /// # A word of caution { #caution }
@@ -174,9 +258,15 @@ use crate::World;
 ///
 /// ```example
 /// // This is bad!
+<<<<<<< HEAD
 /// #let s = state("x", 1)
 /// #context s.update(s.final() + 1)
 /// #context s.get()
+=======
+/// #let x = state("key", 1)
+/// #context x.update(x.final() + 1)
+/// #context x.get()
+>>>>>>> dd1e6e94f73db6a257a5ac34a6320e00410a2534
 /// ```
 ///
 /// In general, you should try not to generate state updates from within context
@@ -259,12 +349,20 @@ impl State {
 
     /// The selector for this state's updates.
     fn selector(&self) -> Selector {
+<<<<<<< HEAD
         select_where!(StateUpdateElem, Key => self.key.clone())
+=======
+        select_where!(StateUpdateElem, key => self.key.clone())
+>>>>>>> dd1e6e94f73db6a257a5ac34a6320e00410a2534
     }
 
     /// Selects all state updates.
     pub fn select_any() -> Selector {
+<<<<<<< HEAD
         StateUpdateElem::elem().select()
+=======
+        StateUpdateElem::ELEM.select()
+>>>>>>> dd1e6e94f73db6a257a5ac34a6320e00410a2534
     }
 }
 
@@ -274,8 +372,36 @@ impl State {
     #[func(constructor)]
     pub fn construct(
         /// The key that identifies this state.
+<<<<<<< HEAD
         key: Str,
         /// The initial value of the state.
+=======
+        ///
+        /// Any [updates]($state.update) to the state will be identified with
+        /// the string key. If you construct multiple states with the same
+        /// `key`, then updating any one will affect all of them.
+        key: Str,
+        /// The initial value of the state.
+        ///
+        /// If you construct multiple states with the same `key` but different
+        /// `init` values, they will each use their own initial value but share
+        /// updates. Specifically, the value of a state at some location in the
+        /// document will be computed from that state's initial value and all
+        /// preceding updates for the state's key.
+        ///
+        /// ```example
+        /// #let banana = state("key", "🍌")
+        /// #let broccoli = state("key", "🥦")
+        ///
+        /// #banana.update(it => it + "😋")
+        ///
+        /// #context [
+        ///   - #state("key", "🍎").get()
+        ///   - #banana.get()
+        ///   - #broccoli.get()
+        /// ]
+        /// ```
+>>>>>>> dd1e6e94f73db6a257a5ac34a6320e00410a2534
         #[default]
         init: Value,
     ) -> State {
@@ -329,7 +455,11 @@ impl State {
         Ok(sequence.last().unwrap().clone())
     }
 
+<<<<<<< HEAD
     /// Update the value of the state.
+=======
+    /// Updates the value of the state.
+>>>>>>> dd1e6e94f73db6a257a5ac34a6320e00410a2534
     ///
     /// The update will be in effect at the position where the returned content
     /// is inserted into the document. If you don't put the output into the
@@ -337,13 +467,53 @@ impl State {
     /// write `{let _ = state("key").update(7)}`. State updates are always
     /// applied in layout order and in that case, Typst wouldn't know when to
     /// update the state.
+<<<<<<< HEAD
+=======
+    ///
+    /// In contrast to [`get`]($state.get), [`at`]($state.at), and
+    /// [`final`]($state.final), this function does not require [context].
+>>>>>>> dd1e6e94f73db6a257a5ac34a6320e00410a2534
     #[func]
     pub fn update(
         self,
         span: Span,
+<<<<<<< HEAD
         /// If given a non function-value, sets the state to that value. If
         /// given a function, that function receives the previous state and has
         /// to return the new state.
+=======
+        /// A value to update to or a function to update with.
+        ///
+        /// - If given a non-function value, sets the state to that value.
+        /// - If given a function, that function receives the state's previous
+        ///   value and has to return the state's new value.
+        ///
+        /// When updating the state based on its previous value, you should
+        /// prefer the function form instead of retrieving the previous value
+        /// from the [context]($context). This allows the compiler to resolve
+        /// the final state efficiently, minimizing the number of
+        /// [layout iterations]($context/#compiler-iterations) required.
+        ///
+        /// In the following example, `{fill.update(f => not f)}` will paint odd
+        /// [items in the bullet list]($list.item) as expected. However, if it's
+        /// replaced with `{context fill.update(not fill.get())}`, then layout
+        /// will not converge within 5 attempts, as each update will take one
+        /// additional iteration to propagate.
+        ///
+        /// ```example
+        /// #let fill = state("fill", false)
+        ///
+        /// #show list.item: it => {
+        ///   fill.update(f => not f)
+        ///   context {
+        ///     set text(fill: fuchsia) if fill.get()
+        ///     it
+        ///   }
+        /// }
+        ///
+        /// #lorem(5).split().map(list.item).join()
+        /// ```
+>>>>>>> dd1e6e94f73db6a257a5ac34a6320e00410a2534
         update: StateUpdate,
     ) -> Content {
         StateUpdateElem::new(self.key, update).pack().spanned(span)
@@ -372,8 +542,13 @@ cast! {
 }
 
 /// Executes a display of a state.
+<<<<<<< HEAD
 #[elem(Construct, Locatable, Show)]
 struct StateUpdateElem {
+=======
+#[elem(Construct, Locatable)]
+pub struct StateUpdateElem {
+>>>>>>> dd1e6e94f73db6a257a5ac34a6320e00410a2534
     /// The key that identifies the state.
     #[required]
     key: Str,
@@ -389,9 +564,12 @@ impl Construct for StateUpdateElem {
         bail!(args.span, "cannot be constructed manually");
     }
 }
+<<<<<<< HEAD
 
 impl Show for Packed<StateUpdateElem> {
     fn show(&self, _: &mut Engine, _: StyleChain) -> SourceResult<Content> {
         Ok(Content::empty())
     }
 }
+=======
+>>>>>>> dd1e6e94f73db6a257a5ac34a6320e00410a2534
